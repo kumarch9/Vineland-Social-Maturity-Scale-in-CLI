@@ -37,19 +37,34 @@ func IsExpired() bool {
 //TTS with print
 func TTSwithPrint(anyString string) {
 	fmt.Println(">>  ", anyString)
-	cmd := exec.Command(`./espk/espeak`, "-v", "f4", "-s", "175", "-p", "90", "-a", "100", anyString)
-	if err := cmd.Run(); err != nil {
-		log.Fatal(err)
+	if anyString != "" {
+		cmd := exec.Command(`./espk/espeak`, "-v", "f4", "-s", "140", "-p", "90", "-a", "100", anyString)
+		if err := cmd.Run(); err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		cmd := exec.Command(`./espk/espeak`, "-v", "f4", "-s", "140", "-p", "90", "-a", "100", "Sorry Wrong Input.")
+		if err := cmd.Run(); err != nil {
+			log.Fatal(err)
+		}
 	}
+
 }
 
 //TTS
 func TTS(anyString string) {
-	//fmt.Println(anyString)
-	cmd := exec.Command(`./espk/espeak`, "-v", "f4", "-s", "175", "-p", "90", "-a", "100", anyString)
-	if err := cmd.Run(); err != nil {
-		log.Fatal(err)
+	if anyString != "" {
+		cmd := exec.Command(`./espk/espeak`, "-v", "f4", "-s", "140", "-p", "90", "-a", "100", anyString)
+		if err := cmd.Run(); err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		cmd := exec.Command(`./espk/espeak`, "-v", "f4", "-s", "140", "-p", "90", "-a", "100", "Sorry Wrong Input.")
+		if err := cmd.Run(); err != nil {
+			log.Fatal(err)
+		}
 	}
+
 }
 
 //screen clean
@@ -67,30 +82,33 @@ func ScreenCls() {
 
 //check condition  in response as yes or no by user
 func CheckConsent() bool {
-	TTSwithPrint(strings.TrimLeft(mg.MsgHead[0], ""))
+
+	userInput := bufio.NewScanner(os.Stdin)
 
 	for {
+		//label:
 		TTSwithPrint(strings.TrimLeft(mg.MsgHead[1], ""))
-		stdinput := bufio.NewReader(os.Stdin)
 		fmt.Print(">>   ")
-		_, err := fmt.Fscan(stdinput, &AnsYN)
-		stdinput.ReadString('\n')
-		if err != nil {
-			TTSwithPrint("Thanks For Visit.....")
-			time.Sleep(3000 * time.Millisecond)
-			os.Exit(0)
-
-		} else if AnsYN == "y" || AnsYN == "Y" {
+		time.Sleep(50 * time.Millisecond)
+		userInput.Scan()
+		AnsYN = strings.TrimSpace(userInput.Text())
+		if AnsYN == "y" || AnsYN == "Y" {
 			TTSwithPrint("Carefully read the to ask questions then answer.")
 			return true
 		} else if AnsYN == "n" || AnsYN == "N" {
 			TTSwithPrint("Thanks For Visit......")
-			time.Sleep(3000 * time.Millisecond)
+			time.Sleep(2000 * time.Millisecond)
 			os.Exit(0)
 
 		} else {
-			TTSwithPrint("Enter the correct reply Y or N.")
+			fmt.Println(">>   Enter the correct reply Y or N.")
+			time.Sleep(1500 * time.Millisecond)
+			continue
+			//TTSwithPrint("Enter the correct reply Y or N.")
+
+			//goto label
 		}
+
 	}
 
 }
@@ -101,7 +119,7 @@ func CheckParent(str string) (is_parentAns int, err error) {
 
 	userInput := bufio.NewScanner(os.Stdin)
 	for {
-	label:
+		//label:
 		TTSwithPrint(str)
 		fmt.Print(">>   ")
 		userInput.Scan()
@@ -113,8 +131,10 @@ func CheckParent(str string) (is_parentAns int, err error) {
 		} else if in == "n" || in == "N" {
 			return 0, nil
 		} else {
-			TTSwithPrint("Enter the correct reply Y or N. ")
-			goto label
+			//TTSwithPrint("Enter the correct reply Y or N. ")
+			fmt.Println(">>   Enter the correct reply Y or N.")
+			//goto label
+			continue
 		}
 	}
 
@@ -125,9 +145,12 @@ func AgeValidator(s string) int {
 	if govalidator.IsInt(s) {
 		a, _ := strconv.Atoi(s)
 		return a
+	} else {
+		//TTSwithPrint("Enter integer only")
+		fmt.Println(">>   Enter integer only.")
+		return 0
 	}
-	TTSwithPrint("Enter integer only")
-	return 0
+
 }
 
 //age validation uses in parents age
@@ -135,7 +158,8 @@ func AgeValidatorParent(age int) int {
 	if age >= 22 && age <= 90 {
 		return age
 	} else if age < 22 && age > 90 {
-		TTSwithPrint("You are not came under 22 to 90 years. Try is by other parents.Bye...")
+		//TTSwithPrint("You are not came under 22 to 90 years. Try is by other parents.Bye...")
+		fmt.Println(">>   You are not came under 22 to 90 years. Try is by other parents.Bye...")
 		time.Sleep(2000 * time.Microsecond)
 		os.Exit(0)
 	}
@@ -144,8 +168,9 @@ func AgeValidatorParent(age int) int {
 
 //age validation uses in child age
 func AgeValidatorChild(age int) int {
-	if age > 15 || age == 0 {
-		TTSwithPrint("This test for only under the 15 years children.")
+	if age > 15 || age < 0 {
+		//TTSwithPrint("This test for only under the 15 years children.")
+		fmt.Println(">>   This test for only under the 15 years children.")
 		return 0
 	}
 	return age
@@ -156,7 +181,7 @@ func AnswerYNint() int {
 	stndIo := bufio.NewReader(os.Stdin)
 	//TTSwithPrint("Please enter  Y (Yes) or N (No).")
 	for {
-	Loop:
+		//Loop:
 		fmt.Print(">>   ")
 		_, err := fmt.Fscan(stndIo, &VarConsent)
 		if err != nil {
@@ -172,11 +197,13 @@ func AnswerYNint() int {
 
 			return 0
 		} else {
-			if VarConsent != "" {
-				TTSwithPrint("Sorry, invalid input please enter  Y (Yes) or N (No).")
-			}
-			VarConsent = ""
-			goto Loop
+			//if VarConsent != "" {
+			//TTSwithPrint("Sorry, invalid input please enter  Y (Yes) or N (No).")
+			fmt.Println(">>   Sorry, invalid input please enter  Y (Yes) or N (No).")
+			//}
+			//VarConsent = ""
+			//goto Loop
+			continue
 		}
 	}
 }
@@ -214,10 +241,10 @@ func GetDetailsParents(is_parent, is_child int) (nowStart bool, parentsage int, 
 		"Enter the age in between 0 to 15 years.",
 	}
 	if is_parent == 1 && is_child == 0 {
+
+		stndIo := bufio.NewReader(os.Stdin)
 		for i := 0; i < 2; i++ {
 			TTSwithPrint(mg.GetQagePC[i])
-			stndIo := bufio.NewReader(os.Stdin)
-
 		Loop1:
 			TTSwithPrint(askingAge[i])
 			fmt.Print(">>   ")
@@ -234,6 +261,7 @@ func GetDetailsParents(is_parent, is_child int) (nowStart bool, parentsage int, 
 				if YesValid != 0 && parents_age != 0 {
 					age = "0"
 				} else {
+					//continue
 					goto Loop1
 				}
 			}
@@ -243,6 +271,7 @@ func GetDetailsParents(is_parent, is_child int) (nowStart bool, parentsage int, 
 
 				if child_age == 0 {
 					goto Loop1
+					//continue
 				}
 				TTSwithPrint("Let starting the test.")
 				start, respOfP, child_name, disability_child := InfoParent()
@@ -262,7 +291,8 @@ func CheckChild(s string) (doneInfo int, err error) {
 
 	userInput := bufio.NewScanner(os.Stdin)
 	for {
-	label:
+		//label:
+
 		TTSwithPrint(mg.QIsChild)
 		fmt.Print(">>   ")
 		userInput.Scan()
@@ -275,8 +305,10 @@ func CheckChild(s string) (doneInfo int, err error) {
 		} else if in == "n" || in == "N" {
 			return 0, nil
 		} else {
-			TTSwithPrint("Enter the correct reply Y or N.")
-			goto label
+			//TTSwithPrint("Enter the correct reply Y or N.")
+			fmt.Println(">>   Enter the correct reply Y or N.")
+			//goto label
+			continue
 		}
 	}
 
@@ -310,9 +342,10 @@ func GetDetailsChild() (doneInfo bool, age_c int, respOfchild []int, nameChild s
 	var age string
 	var cAge int
 	if IsParent == 0 && IsChild == 1 {
+		TTSwithPrint(mg.GetQageC)
 		for {
-			TTSwithPrint(mg.GetQageC)
-		Loop1:
+
+			//Loop1:
 
 			stndIo := bufio.NewReader(os.Stdin)
 			TTSwithPrint("Please  enter the age in between 0 to 15 years.")
@@ -327,7 +360,8 @@ func GetDetailsChild() (doneInfo bool, age_c int, respOfchild []int, nameChild s
 			ChildAge = AgeValidatorChild(YesValid)
 			cAge = AgeValidatorChild(YesValid)
 			if ChildAge == 0 {
-				goto Loop1
+				//goto Loop1
+				continue
 			}
 			TTSwithPrint("Let Starting the test.")
 			start, resp, name_child, disability_child := InfoChild()
