@@ -15,15 +15,15 @@ import (
 	"github.com/asaskevich/govalidator"
 )
 
-var AnsYN, nameChild string
-var VarConsent string
-var AddRespVarMain []int
-var Pdata []int
-var ChildAge, ParentsAge int
-var Cdata []int
-var IsParent int
-var IsChild int
-var IsStart bool = false
+var (
+	AnsYN, nameChild string
+	VarConsent       string
+
+	ChildAge, IsParent, IsChild int
+	Cdata                       []int
+
+	IsStart bool = false
+)
 
 //check expire time
 func IsExpired() bool {
