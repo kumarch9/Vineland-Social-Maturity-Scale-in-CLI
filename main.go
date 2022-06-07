@@ -14,21 +14,22 @@ import (
 	ct "github.com/daviddengcn/go-colortext"
 )
 
-var Disability, Childage, Parentsage, MaxQuesNum, MinQuesNum, isParent, isChild, minAge, maxAge int
-var dataOfP, dataOfC, bindQuestionNumber, forwardCounter, backwardCounter []int
+var (
+	Disability, Childage, Parentsage, MaxQuesNum, MinQuesNum, isParent, isChild, minAge, maxAge int
+	dataOfP, dataOfC, bindQuestionNumber, forwardCounter, backwardCounter                       []int
+	varSliceChildInfo                                                                           q.StructSliceChildInfo
+	QuestionNum                                                                                 [][]int
+	nameofChild, nameofParents, typeOfDisability                                                string
+	UserConsent                                                                                 bool
+	IsDone                                                                                      []bool
+	socialAge, socialAgeInMonth, socialQuotient                                                 float32
 
-var varSliceChildInfo q.StructSliceChildInfo
-var QuestionNum [][]int
-var nameofChild, nameofParents, typeOfDisability string
-var UserConsent bool
-var IsDone []bool
-var socialAge, socialAgeInMonth, socialQuotient float32
+	AgeInYear, AgeInMonth float64
 
-var AgeInYear, AgeInMonth float64
-
-var bindCharacteristics map[string]string
-var briefOfQNum []string
-var wg sync.WaitGroup
+	bindCharacteristics map[string]string
+	briefOfQNum         []string
+	wg                  sync.WaitGroup
+)
 
 func main() {
 
